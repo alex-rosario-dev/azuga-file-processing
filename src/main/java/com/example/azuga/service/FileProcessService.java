@@ -42,7 +42,6 @@ public class FileProcessService {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         try {
-            
             FileData fileData = xmlMapper.readValue(classPathResource.getFile(), FileData.class);
             log.info(String.format("Reading raw file: %s", fileData.toString()));
             fileData.setTimeStamp(now);
@@ -52,6 +51,7 @@ public class FileProcessService {
             
             String fileName = String.format("%s%s - %s", jsonFileLocation, jsonFileNameFormat, Instant.now());
             file = new File(fileName);
+            FileUtils.createParentDirectories(file);
             FileUtils.writeStringToFile(file, jsonData, StandardCharsets.UTF_8);
             List<LocalDateTime> temperatures = new ArrayList<>();
             try (Stream<Path> paths = Files.walk(Paths.get(jsonFileLocation))) {
